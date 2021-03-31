@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { logout } from '../../actions/auth';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import { Badge } from 'reactstrap';
 
 const Navbar = ({ auth: { isAuthenticated }, logout }) => {
   const authLinks = (
@@ -11,7 +14,19 @@ const Navbar = ({ auth: { isAuthenticated }, logout }) => {
         <Link to='/history'>Orders History</Link>
       </li>
       <li>
-        <Link to='/cart'>Cart</Link>
+        <Link to='/cart'>
+          <FontAwesomeIcon
+            icon={faShoppingCart}
+            size='2x'
+            style={{ position: 'absolute' }}
+          />
+          <Badge
+            variant='light'
+            style={{ position: 'relative', size: '1x', marginLeft: '12px' }}
+          >
+            9
+          </Badge>
+        </Link>
       </li>
 
       <li>
@@ -26,7 +41,19 @@ const Navbar = ({ auth: { isAuthenticated }, logout }) => {
   const guestLinks = (
     <ul>
       <li>
-        <Link to='/cart'>Cart</Link>
+        <Link to='/cart'>
+          <FontAwesomeIcon
+            icon={faShoppingCart}
+            size='2x'
+            style={{ position: 'absolute' }}
+          />
+          <Badge
+            variant='light'
+            style={{ position: 'relative', size: '1x', marginLeft: '12px' }}
+          >
+            9
+          </Badge>
+        </Link>
       </li>
       <li>
         <Link to='/register'>Register</Link>
@@ -41,7 +68,7 @@ const Navbar = ({ auth: { isAuthenticated }, logout }) => {
     <nav className='navbar bg-dark'>
       <h1>
         <Link to='/'>
-          <i className='fas fa-code' /> BestPizza
+          <i className='fas fa-code' /> BestPizza{' '}
         </Link>
       </h1>
       <Fragment>{isAuthenticated ? authLinks : guestLinks}</Fragment>

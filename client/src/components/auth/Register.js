@@ -7,13 +7,28 @@ import PropTypes from 'prop-types';
 
 const Register = ({ setAlert, register, isAuthenticated }) => {
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
+    phone: '',
+    street: '',
+    house: '',
+    area: '',
     email: '',
     password: '',
-    password2: ''
+    password2: '',
   });
 
-  const { name, email, password, password2 } = formData;
+  const {
+    firstName,
+    lastName,
+    phone,
+    street,
+    house,
+    area,
+    email,
+    password,
+    password2,
+  } = formData;
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,65 +38,127 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
     if (password !== password2) {
       setAlert('Passwords do not match', 'danger');
     } else {
-      register({ name, email, password });
+      register({
+        firstName,
+        lastName,
+        phone,
+        address: {
+          street,
+          house,
+          area,
+        },
+        email,
+        password,
+      });
     }
   };
 
   if (isAuthenticated) {
-    return <Redirect to="/dashboard" />;
+    return <Redirect to='/' />;
   }
 
   return (
     <Fragment>
-      <h1 className="large text-primary">Sign Up</h1>
-      <p className="lead">
-        <i className="fas fa-user" /> Create Your Account
+      <h1 className='large ' style={{ color: '#f02d13' }}>
+        Sign Up
+      </h1>
+      <p className='lead'>
+        <i className='fas fa-user' /> Create Your Account
       </p>
-      <form className="form" onSubmit={onSubmit}>
-        <div className="form-group">
+      <form className='form' onSubmit={onSubmit}>
+        <div className='form-group'>
           <input
-            type="text"
-            placeholder="Name"
-            name="name"
-            value={name}
+            type='text'
+            placeholder='First name'
+            name='firstName'
+            value={firstName}
+            required
             onChange={onChange}
           />
         </div>
-        <div className="form-group">
+        <div className='form-group'>
           <input
-            type="email"
-            placeholder="Email Address"
-            name="email"
+            type='text'
+            placeholder='Last name'
+            name='lastName'
+            value={lastName}
+            onChange={onChange}
+          />
+        </div>
+        <div className='form-group'>
+          <input
+            type='text'
+            placeholder='Phone'
+            name='phone'
+            value={phone}
+            onChange={onChange}
+          />
+        </div>
+        <p className='my-1'>Address</p>
+        <div
+          className='form-group'
+          style={{ display: 'inline', marginRight: '2%' }}
+        >
+          <input
+            type='number'
+            placeholder='Street number'
+            name='street'
+            value={street}
+            onChange={onChange}
+          />
+        </div>
+        <div
+          className='form-group'
+          style={{ display: 'inline', marginRight: '2%' }}
+        >
+          <input
+            type='number'
+            placeholder='House number'
+            name='house'
+            value={house}
+            onChange={onChange}
+          />
+        </div>
+        <div className='form-group ' style={{ display: 'inline' }}>
+          <input
+            type='number'
+            placeholder='Area number'
+            name='area'
+            value={area}
+            onChange={onChange}
+          />
+        </div>
+        <div className='form-group'>
+          <input
+            type='email'
+            placeholder='Email Address'
+            name='email'
             value={email}
             onChange={onChange}
           />
-          <small className="form-text">
-            This site uses Gravatar so if you want a profile image, use a
-            Gravatar email
-          </small>
         </div>
-        <div className="form-group">
+        <div className='form-group'>
           <input
-            type="password"
-            placeholder="Password"
-            name="password"
+            type='password'
+            placeholder='Password'
+            name='password'
             value={password}
             onChange={onChange}
           />
         </div>
-        <div className="form-group">
+        <div className='form-group'>
           <input
-            type="password"
-            placeholder="Confirm Password"
-            name="password2"
+            type='password'
+            placeholder='Confirm Password'
+            name='password2'
             value={password2}
             onChange={onChange}
           />
         </div>
-        <input type="submit" className="btn btn-primary" value="Register" />
+        <input type='submit' className='btn btn-primary' value='Register' />
       </form>
-      <p className="my-1">
-        Already have an account? <Link to="/login">Sign In</Link>
+      <p className='my-1'>
+        Already have an account? <Link to='/login'>Sign In</Link>
       </p>
     </Fragment>
   );
@@ -90,11 +167,11 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
 Register.propTypes = {
   setAlert: PropTypes.func.isRequired,
   register: PropTypes.func.isRequired,
-  isAuthenticated: PropTypes.bool
+  isAuthenticated: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
-  isAuthenticated: state.auth.isAuthenticated
+  isAuthenticated: state.auth.isAuthenticated,
 });
 
 export default connect(mapStateToProps, { setAlert, register })(Register);
