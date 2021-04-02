@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -7,7 +7,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { Badge } from 'reactstrap';
 
-const Navbar = ({ auth: { isAuthenticated }, logout }) => {
+const Navbar = ({ auth: { isAuthenticated }, logout, cartPizzas }) => {
+  const [cartItems, setCartItems] = useState(0);
+  useEffect(() => {
+    let total = 0;
+    cartPizzas &&
+      cartPizzas.length > 0 &&
+      cartPizzas.map((item) => (total = item.quantity + total));
+    setCartItems(total);
+  }, [cartPizzas]);
+
   const authLinks = (
     <ul>
       <li>
@@ -22,17 +31,16 @@ const Navbar = ({ auth: { isAuthenticated }, logout }) => {
           />
           <Badge
             variant='light'
-            style={{ position: 'relative', size: '1x', marginLeft: '12px' }}
+            style={{ position: 'relative', size: '1x', marginLeft: '14px' }}
           >
-            9
+            {cartItems}
           </Badge>
         </Link>
       </li>
 
       <li>
         <a onClick={logout} href='#!'>
-          <i className='fas fa-sign-out-alt' />{' '}
-          <span className='hide-sm'>Logout</span>
+          Logout
         </a>
       </li>
     </ul>
@@ -49,9 +57,9 @@ const Navbar = ({ auth: { isAuthenticated }, logout }) => {
           />
           <Badge
             variant='light'
-            style={{ position: 'relative', size: '1x', marginLeft: '12px' }}
+            style={{ position: 'relative', size: '1x', marginLeft: '14px' }}
           >
-            9
+            {cartItems}
           </Badge>
         </Link>
       </li>
@@ -79,10 +87,12 @@ const Navbar = ({ auth: { isAuthenticated }, logout }) => {
 Navbar.propTypes = {
   logout: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
+  cartPizzas: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   auth: state.auth,
+  cartPizzas: state.cart,
 });
 
 export default connect(mapStateToProps, { logout })(Navbar);

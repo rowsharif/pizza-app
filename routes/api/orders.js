@@ -15,7 +15,7 @@ const User = require('../../models/User');
 // @access   Private
 router.get('/', auth, async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user.id });
+    const orders = await Order.find({ user: req.user.id }).sort([['date', -1]]);
 
     if (orders.length === 0) {
       return res.status(400).json({ msg: 'There is no orders for this user' });
@@ -47,19 +47,19 @@ router.post(
     }
 
     try {
-      let { pizzas, deliveryCost } = req.body;
+      const { pizzas, deliveryCost } = req.body;
       let total = 0;
 
-      const ids = pizzas.map((item) => item.pizza);
-      let result = await Pizza.find({ _id: { $in: ids } });
+      // const ids = pizzas.map((item) => item.pizza);
+      // let result = await Pizza.find({ _id: { $in: ids } });
 
-      pizzas = pizzas.map((piz) => {
-        const pizza = result.filter((p) => p.id === piz.pizza)[0];
-        return { ...piz, pizza };
-      });
+      // pizzas = pizzas.map((piz) => {
+      //   const pizza = result.filter((p) => p.id === piz.pizza)[0];
+      //   return { ...piz, pizza };
+      // });
 
       pizzas.map((piz) => {
-        total = total + piz.pizza.price * piz.quantity;
+        total = total + piz.price * piz.quantity;
       });
 
       total = deliveryCost ? total + deliveryCost : total + 16;
@@ -71,7 +71,6 @@ router.post(
       if (!token) {
         const newOrder = new Order({
           ...req.body,
-          pizzas,
           total,
         });
 
@@ -90,12 +89,13 @@ router.post(
       });
       const newOrder = new Order({
         ...req.body,
-        pizzas,
         user,
         total,
       });
+      console.log('old piz order', newOrder);
 
       const order = await newOrder.save();
+      console.log('new piz order', order);
 
       res.json(order);
     } catch (err) {

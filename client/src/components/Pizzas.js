@@ -13,47 +13,74 @@ import {
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
 import { getPizzas } from '../actions/pizza';
-import PropTypes from 'prop-types';
+import { handleCart } from '../actions/cart';
 
-const Pizzas = ({ pizzas, getPizzas }) => {
+import PropTypes from 'prop-types';
+import Spinner from './layout/Spinner';
+
+const Pizzas = ({ pizzas, getPizzas, cartPizzas, handleCart }) => {
   const [newPizz, setNewPizz] = useState([]);
 
   useEffect(() => {
-    getPizzas();
-    setNewPizz(pizzas.map((p) => ({ ...p, num: 0 })));
+    (pizzas === null || pizzas.length) === 0 && getPizzas();
+    console.log('got the pizzas', newPizz);
   }, []);
 
-  const handleRemove = (p) => {
-    if (p.num > 0) {
-      let temp = newPizz.map((item) =>
-        item._id === p._id ? { ...item, num: item.num - 1 } : item
-      );
+  useEffect(() => {
+    let tempPizzas = pizzas.map((p) => ({ ...p, quantity: 0 }));
+    if (cartPizzas && cartPizzas.length > 0) {
+      let temp = tempPizzas.map((p) => {
+        let items = cartPizzas.filter((cp) => cp._id === p._id);
+        if (items.length > 0) {
+          return items[0];
+        } else return p;
+      });
+      console.log('newp', temp);
       setNewPizz(temp);
+    } else {
+      setNewPizz(tempPizzas);
+    }
+  }, [cartPizzas, pizzas]);
+
+  const handleRemove = (p) => {
+    if (p.quantity === 1) {
+      handleCart(p, 'remove');
+    } else if (p.quantity > 0) {
+      handleCart(p, 'decrease');
     }
   };
 
   const handleAdd = (p) => {
-    if (p.num < 20) {
-      let temp = newPizz.map((item) =>
-        item._id === p._id ? { ...item, num: item.num + 1 } : item
-      );
-      setNewPizz(temp);
+    if (p.quantity === 0) {
+      handleCart(p, 'add');
+    } else {
+      handleCart(p, 'increase');
     }
   };
 
   return (
     <div>
       <Row>
-        {newPizz &&
-          newPizz.length > 0 &&
+        {newPizz && newPizz.length > 0 ? (
           newPizz.map((piz) => (
-            <Col sm='4'>
+            <Col sm='4' key={piz._id}>
               <Card className='landing-card'>
                 <CardBody>
                   <CardTitle tag='h5'>{piz.name}</CardTitle>
+                  <CardSubtitle tag='h6' className='mb-2 text-muted'>
+                    {piz.quantity > 0 ? piz.price * piz.quantity : piz.price}{' '}
+                    USD /{' '}
+                    {Math.round(
+                      piz.quantity > 0
+                        ? piz.price * piz.quantity * 0.85 * 100
+                        : piz.price * 0.85 * 100
+                    ) / 100}{' '}
+                    EUR
+                  </CardSubtitle>
                   <CardImg
                     top
-                    src={require(`../img/${piz.name}.jpeg`)}
+                    className='landing-CardImg'
+                    src={require(`../img/${piz.name}.jpeg`).default}
                     alt={piz.name}
                   />
                   <CardSubtitle tag='h6' className='mb-2 text-muted'>
@@ -64,7 +91,7 @@ const Pizzas = ({ pizzas, getPizzas }) => {
                       <Button onClick={() => handleRemove(piz)}>-</Button>
                     </Col>
                     <Col sm='4'>
-                      <Input value={piz.num} />
+                      <Input value={piz.quantity} readOnly />
                     </Col>
                     <Col sm='4'>
                       <Button onClick={() => handleAdd(piz)}>+</Button>
@@ -73,7 +100,10 @@ const Pizzas = ({ pizzas, getPizzas }) => {
                 </CardBody>
               </Card>
             </Col>
-          ))}
+          ))
+        ) : (
+          <Spinner />
+        )}
       </Row>
     </div>
   );
@@ -82,10 +112,13 @@ const Pizzas = ({ pizzas, getPizzas }) => {
 Pizzas.propTypes = {
   getPizzas: PropTypes.func.isRequired,
   pizzas: PropTypes.array.isRequired,
+  cartPizzas: PropTypes.array.isRequired,
+  handleCart: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   pizzas: state.pizza.pizzas,
+  cartPizzas: state.cart,
 });
 
-export default connect(mapStateToProps, { getPizzas })(Pizzas);
+export default connect(mapStateToProps, { getPizzas, handleCart })(Pizzas);

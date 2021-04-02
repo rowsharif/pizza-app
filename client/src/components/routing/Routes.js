@@ -19,7 +19,7 @@ const Routes = (props) => {
         <Route exact path='/register' component={Register} />
         <Route exact path='/login' component={Login} />
         <Route exact path='/cart' component={Cart} />
-        <Route exact path='/orderForm' component={OrderForm} />
+        <Route exact path='/order' component={OrderForm} />
         <Route exact path='/bill' component={Bill} />
         <PrivateRoute exact path='/history' component={HistoryComp} />
         <Route component={NotFound} />

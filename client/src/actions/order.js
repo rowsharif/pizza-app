@@ -1,7 +1,8 @@
 import api from '../utils/api';
 import { setAlert } from './alert';
+import { handleCart } from './cart';
 
-import { GET_ORDER, GET_ORDERS, ORDER_ERROR, CLEAR_ORDER } from './types';
+import { CREATE_ORDER, GET_ORDERS, ORDER_ERROR, CLEAR_ORDER } from './types';
 
 // Get current users order
 export const getUsersOrders = () => async (dispatch) => {
@@ -28,23 +29,25 @@ export const createOrder = (formData, history) => async (dispatch) => {
     const res = await api.post('/orders', formData);
 
     dispatch({
-      type: GET_ORDER,
+      type: CREATE_ORDER,
       payload: res.data,
     });
-
+    dispatch(handleCart([], 'delete'));
     dispatch(setAlert('Order Created', 'success'));
 
     history.push('/bill');
   } catch (err) {
-    const errors = err.response.data.errors;
+    if (err.response != null) {
+      const errors = err.response.data.errors;
 
-    if (errors) {
-      errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')));
+      if (errors) {
+        errors.forEach((error) => dispatch(setAlert(error.msg, 'danger')));
+      }
+
+      dispatch({
+        type: ORDER_ERROR,
+        payload: { msg: err.response.statusText, status: err.response.status },
+      });
     }
-
-    dispatch({
-      type: ORDER_ERROR,
-      payload: { msg: err.response.statusText, status: err.response.status },
-    });
   }
 };

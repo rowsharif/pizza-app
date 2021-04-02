@@ -16,16 +16,13 @@ const OrderSchema = new Schema({
   },
   pizzas: [
     {
-      pizza: {
-        type: Schema.Types.ObjectId,
-        ref: 'pizza',
-        price: {
-          type: Number,
-          required: true,
-        },
-        name: {
-          type: String,
-        },
+      pizza: { type: Schema.Types.ObjectId, ref: 'pizza' },
+      price: {
+        type: Number,
+        required: true,
+      },
+      name: {
+        type: String,
       },
       quantity: {
         type: Number,
