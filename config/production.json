@@ -1,0 +1,4 @@
+{
+    "mongoURI": "mongodb+srv://row:row123@pizzaapp.uorms.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+    "jwtSecret":"myPizzaSecret"
+}
