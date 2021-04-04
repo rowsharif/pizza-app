@@ -26,5 +26,8 @@
   "devDependencies": {
     "concurrently": "^6.0.0",
     "nodemon": "^2.0.7"
+  },"optionalDependencies": { "fsevents": "2.x.x" },
+  "engines": {
+    "node": "15.x"
   }
 }
