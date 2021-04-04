@@ -68,13 +68,7 @@ const Pizzas = ({ pizzas, getPizzas, cartPizzas, handleCart }) => {
                 <CardBody>
                   <CardTitle tag='h5'>{piz.name}</CardTitle>
                   <CardSubtitle tag='h6' className='mb-2 text-muted'>
-                    {piz.quantity > 0 ? piz.price * piz.quantity : piz.price}{' '}
-                    USD /{' '}
-                    {Math.round(
-                      piz.quantity > 0
-                        ? piz.price * piz.quantity * 0.85 * 100
-                        : piz.price * 0.85 * 100
-                    ) / 100}{' '}
+                    {piz.price} USD / {Math.round(piz.price * 0.85 * 100) / 100}{' '}
                     EUR
                   </CardSubtitle>
                   <CardImg
